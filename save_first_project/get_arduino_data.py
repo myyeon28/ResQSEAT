@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # get_arduino_data.py
 
 import os, sys, json, time, glob, threading
