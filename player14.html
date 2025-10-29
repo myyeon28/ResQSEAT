@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Save First - Accident Details (ID: {{ accident_id[:8] }})</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Ewha Green color customization
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'ewha-green': {
+                            DEFAULT: '#00462A',
+                            'hover': '#003A23',
+                            'light': '#E0F0E8',
+                            'text': '#00462A',
+                        },
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        /* Style for the car seat grid */
+        .seat-grid {
+            grid-template-areas: 
+                "seat1 seat2"
+                "seat3 seat4";
+        }
+        .seat-box {
+            border-left: 1px solid #ddd;
+            border-top: 1px solid #ddd;
+        }
+        .seat-box:nth-child(1) { grid-area: seat1; border-top: none; border-left: none; }
+        .seat-box:nth-child(2) { grid-area: seat2; border-top: none; }
+        .seat-box:nth-child(3) { grid-area: seat3; border-left: none; }
+        .seat-box:nth-child(4) { grid-area: seat4; }
+        /* Style for empty seats */
+        .text-empty { color: #9ca3af; } /* Gray 400 */
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen"> 
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+        <div class="mb-4">
+            <a href="/" class="text-ewha-green-text hover:underline font-medium">&larr; Back to Accident Log</a>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-xl p-6 border border-gray-100">
+            <h1 class="text-2xl font-bold mb-4 text-ewha-green">Accident Details (ID: {{ accident_id[:8] }})</h1>
+
+            <div class="mb-6 p-3 bg-ewha-green-light border border-ewha-green rounded-lg">
+                <h3 class="font-medium text-ewha-green-text">Max Priority Score:</h3>
+                {# Assume priority_score comes directly from jsondata calculation for the highest scoring seat #}
+                <p class="text-lg font-bold text-red-700 mt-1">{{ priority_score }}</p> 
+            </div>
+            
+            {% if image_url %}
+            <div class="mb-8 border border-gray-300 rounded-lg overflow-hidden">
+                <h2 class="text-xl font-semibold p-3 text-ewha-green bg-gray-50 border-b border-gray-200">Captured Image at Accident Time</h2>
+                <div class="p-3">
+                    <img src="{{ image_url }}" alt="Captured scene image for accident {{ accident_id[:8] }}" class="w-full h-auto object-contain rounded-md" />
+                </div>
+            </div>
+            {% else %}
+            <div class="mb-8 border border-gray-300 rounded-lg overflow-hidden p-5 text-center text-gray-500">
+                <p>No image captured yet for this accident ID.</p>
+            </div>
+            {% endif %}
+
+            <h2 class="text-xl font-semibold mb-3 text-ewha-green">Detailed Seat Status (4-Seater Car)</h2>
+            <div class="grid grid-cols-2 seat-grid border border-gray-300 rounded-lg overflow-hidden">
+                {# Loop through seat numbers 1 to 4 #}
+                {% for seat_num in range(1, 5) %}
+                    {# Construct the key like 'seat1', 'seat2', etc. #}
+                    {% set seat_key = 'seat' ~ seat_num %}
+                    {# Get the dictionary for the current seat from the data passed by Flask #}
+                    {# Provide a default empty dict if the key doesn't exist #}
+                    {% set detail = seat_details.get(seat_key, {}) %} 
+                    
+                    <div class="seat-box p-4 bg-white hover:bg-gray-50 transition-colors">
+                        <h3 class="text-lg font-bold mb-2 text-gray-800">Seat {{ seat_num }}</h3>
+                        
+                        {# --- [MODIFIED] Check if status is 'empty' --- #}
+                        {% if detail.status == "empty" %}
+                            <div class="space-y-1 text-sm text-empty italic">
+                                <p><span class="font-medium">Status:</span> Empty</p>
+                                <p><span class="font-medium">Adult or Child:</span> N/A</p>
+                                <p><span class="font-medium">Conscious or Unconscious:</span> N/A</p>
+                                <p><span class="font-medium">Impact Value:</span> N/A</p>
+                                <p><span class="font-medium">Score:</span> 0</p> {# Score is always 0 if empty #}
+                            </div>
+                        {# --- If status is 'occupied' (or anything else), display details --- #}
+                        {% else %}
+                            <div class="space-y-1 text-sm">
+                                <p><span class="font-medium">Status:</span> Occupied</p>
+                                <p>
+                                    <span class="font-medium">Adult or Child:</span> 
+                                    {# Check the boolean is_child field #}
+                                    <span class="{% if detail.is_child %}text-red-600 font-semibold{% else %}text-ewha-green-text{% endif %}">
+                                        {{ 'Child' if detail.is_child else 'Adult' }}
+                                    </span>
+                                </p>
+                                <p>
+                                    <span class="font-medium">Conscious or Unconscious:</span> 
+                                    {# Check the boolean is_conscious field (True means conscious) #}
+                                    <span class="{% if not detail.is_conscious %}text-red-600 font-semibold{% else %}text-ewha-green-text{% endif %}">
+                                        {{ 'Unconscious' if not detail.is_conscious else 'Conscious' }}
+                                    </span>
+                                </p>
+                                <p>
+                                    <span class="font-medium">Impact Value:</span> 
+                                    {# Display the numerical impact value #}
+                                    <span class="text-gray-700 font-mono">{{ detail.impact }}</span>
+                                </p>
+                                <p>
+                                    <span class="font-medium">Score:</span> 
+                                    {# Display the numerical score #}
+                                    <span class="text-red-700 font-mono font-semibold">{{ detail.score }}</span>
+                                </p>
+                            </div>
+                        {% endif %} {# End of empty/occupied check #}
+                    </div> {# End of seat-box #}
+                {% endfor %} {# End of loop #}
+            </div> {# End of seat-grid #}
+        </div> {# End of card #}
+    </div> {# End of container #}
+</body>
+</html>

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Save First - Accident Monitoring</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Ewha Green color customization
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'ewha-green': {
+                            DEFAULT: '#00462A',
+                            'hover': '#003A23',
+                            'light': '#E0F0E8',
+                            'text': '#00462A',
+                        },
+                    }
+                }
+            }
+        }
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.10.2/cdn.min.js" defer></script>
+    <style>
+        /* Use Inter font */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-5xl" x-data="{ 
+        error: null,
+        accidentLog: [],
+        
+        
+        fetchLog() {
+            fetch('/accidents')
+                .then(response => response.json())
+                .then(data => { 
+                    this.accidentLog = data; 
+                    this.error = null;
+                })
+                .catch(err => { 
+                    this.error = 'Failed to load accident log or network error.';
+                    console.error('Fetch error:', err);
+                });
+        }
+
+    }" x-init="
+       
+        fetchLog(); 
+        
+        
+        setInterval(() => fetchLog(), 5000); 
+    ">
+
+        <h1 class="text-3xl font-bold text-center mb-8 text-ewha-green">
+            Save First
+        </h1>
+        <p class="text-center text-gray-500 mb-8">Accident Monitoring System Dashboard</p>
+
+        <div class="bg-white rounded-lg shadow-xl p-6">
+            <h2 class="text-xl font-semibold mb-4 text-ewha-green">Accident Log</h2>
+            
+            <div x-show="error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
+                <span x-text="error"></span>
+            </div>
+            
+            <div x-show="accidentLog.length === 0" class="text-center text-gray-500 py-8">
+                No accidents recorded yet.
+            </div>
+
+            <div x-show="accidentLog.length > 0" class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-ewha-green-light">
+                        <tr>
+                            <th class="px-3 py-3 text-left text-xs font-medium text-ewha-green-text uppercase tracking-wider">Year</th>
+                            <th class="px-3 py-3 text-left text-xs font-medium text-ewha-green-text uppercase tracking-wider">Month</th>
+                            <th class="px-3 py-3 text-left text-xs font-medium text-ewha-green-text uppercase tracking-wider">Day</th>
+                            <th class="px-3 py-3 text-left text-xs font-medium text-ewha-green-text uppercase tracking-wider">Hour</th>
+                            <th class="px-3 py-3 text-left text-xs font-medium text-ewha-green-text uppercase tracking-wider">Minutes</th>
+                            <th class="px-3 py-3 text-left text-xs font-medium text-ewha-green-text uppercase tracking-wider">Seconds</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-ewha-green-text uppercase tracking-wider">Priority (Max Score)</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-ewha-green-text uppercase tracking-wider">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <template x-for="log in accidentLog" :key="log.id">
+                            <tr>
+                                <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500" x-text="log.year"></td>
+                                <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500" x-text="log.month"></td>
+                                <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500" x-text="log.day"></td>
+                                <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500" x-text="log.hour"></td>
+                                <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500" x-text="log.minute"></td>
+                                <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-500" x-text="log.second"></td>
+                                <td class="px-6 py-4 text-sm text-red-600 font-semibold" x-text="log.priority_score"></td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                    <a :href="log.player_url" class="text-ewha-green-text hover:underline hover:text-ewha-green-hover font-medium" target="_blank">
+                                        More Information
+                                    </a>
+                                </td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
