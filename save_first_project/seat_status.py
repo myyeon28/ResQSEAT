@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #seat_status.py
 
 import json
