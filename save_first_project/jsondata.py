@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # jsondata.py
 
 import json
