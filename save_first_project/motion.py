@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # motion.py
 
 import cv2
