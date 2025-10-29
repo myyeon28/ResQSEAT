@@ -126,4 +126,21 @@ Flask 기반 서버. Raspberry Pi에서 보낸 데이터를 받아서 저장하�
 
 (프로젝트 환경은 Raspberry Pi + Arduino Nano 기준으로 작성되었음)
 
+---
+
+## 📄 오픈소스 라이선스 고지 (Open Source License Notice)
+
+본 프로젝트에는 다음 오픈소스 소프트웨어가 포함되어 있습니다.
+
+- **FaceLib**  
+  - Repository: [https://github.com/sajjjadayobi/FaceLib](https://github.com/sajjjadayobi/FaceLib)  
+  - License: MIT License  
+  - Copyright (c) 2020 Sajjad Ayobi
+
+FaceLib는 얼굴 인식 및 연령/성별 추정을 위한 오픈소스 라이브러리로,  
+본 프로젝트에서는 `AgeGenderEstimator`, `FaceDetector` 모듈에 활용되었습니다.  
+원저작자의 MIT 라이선스 조건을 준수하며,  
+라이선스 전문은 본 프로젝트의 `LICENSE` 파일에 포함되어 있습니다.
+
+
 
