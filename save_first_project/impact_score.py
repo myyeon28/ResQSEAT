@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # impact_score.py
 
 import json, time
