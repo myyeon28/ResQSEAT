@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # age.py
 
 import cv2
