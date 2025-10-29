@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # capture.py
 
 import cv2
