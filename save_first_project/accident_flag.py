@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # accident_flag.py
 
 import json, time
