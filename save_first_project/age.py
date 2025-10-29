@@ -1,4 +1,6 @@
 # age.py
+# This module uses components of facelib (MIT License)
+# https://github.com/serengil/face_lib
 
 import cv2
 import time
